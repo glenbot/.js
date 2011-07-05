@@ -71,7 +71,7 @@ $('#add_day_entry_link').live('click', function() {
 
             // reset the label
             project_label.html('Project / Task');
-            project_label.html(project_label.html() + ' > ' + key)
+            project_label.html(project_label.html() + ' > ' + key);
             
             // hide the search and select the correct project dropdown
             project_selector.val(project_tasks_lookup[key]);
