@@ -1,3 +1,12 @@
+/*
+Harvest Project Search for Timesheet Day View
+
+Add optional searchable input field for all of your projects
+on the timesheet say view.
+
+Requires jQuery UI 1.8+ in the .js/default.js file
+*/
+
 var jquery18css = 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/base/jquery-ui.css';
 
 $('head').append('<link rel="stylesheet" href="' + jquery18css + '" type="text/css" />');
@@ -7,6 +16,7 @@ $('#add_day_entry_link').live('click', function() {
     var project_label = project_selector_wrap.parent().find('label');
     var project_tasks = [];
     var project_tasks_lookup = {};
+    var project_tasks_lookup_reversed = {};
     var html = '';
 
     // setup the new elements
@@ -28,6 +38,7 @@ $('#add_day_entry_link').live('click', function() {
           var key = label + ' ' + sub_label;
           project_tasks.push(key);
           project_tasks_lookup[key] = option.val();
+          project_tasks_lookup_reversed[option.val()] = key;
        });
     });
 
@@ -39,7 +50,7 @@ $('#add_day_entry_link').live('click', function() {
       project_selector_wrap.prepend(project_search);
     }
 
-    // set the toggle link to bring up the search selector and hide the drop down
+    // set the toggle link to bring up the search and hide the drop down
     $('#project-search-tl').live('click', function() {
       // hide selector and show search
       $(this).hide();
@@ -51,7 +62,7 @@ $('#add_day_entry_link').live('click', function() {
       return false;
     });
 
-    // set the toggle link to bring up the search selector and hide the drop down
+    // set the toggle link to bring up the dropdown and hide the search
     $('#project-search-cl').live('click', function() {
       // hide selector and show search
       $(this).hide();
@@ -62,16 +73,12 @@ $('#add_day_entry_link').live('click', function() {
       return false;
     });
 
-    // get the new project selector and enable autocomplete on it
+    // set auto-complete on the new project search
     project_search.autocomplete({
         delay: 100,
         source: project_tasks,
         select: function(event, ui) {
             var key = ui.item.value;
-
-            // reset the label
-            project_label.html('Project / Task');
-            project_label.html(project_label.html() + ' > ' + key);
             
             // hide the search and select the correct project dropdown
             project_selector.val(project_tasks_lookup[key]);
@@ -81,5 +88,13 @@ $('#add_day_entry_link').live('click', function() {
             search_cancel_link.hide();
             search_toggle_link.show();
         }
+    });
+
+    // reset the label and search input on change
+    project_selector.live('change', function() {
+      var label = project_tasks_lookup_reversed[$(this).val()];
+      project_label.html('Project / Task');
+      project_label.html(project_label.html() + ' > ' + label);
+      project_search.val(label);
     });
 });
